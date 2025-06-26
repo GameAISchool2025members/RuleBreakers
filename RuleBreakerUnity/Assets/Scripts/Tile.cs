@@ -28,6 +28,7 @@ public class Tile : MonoBehaviour
         pieceTeam = 0;
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager.countTile();
 
         if (isLegal)
         {
@@ -69,6 +70,8 @@ public class Tile : MonoBehaviour
             gameManager.addP2Piece(newPiece);
             gameManager.addP2Coords(coords);
         }
+
+        gameManager.checkIfGameOver();
 
         gameManager.swapPlayer();
     }

@@ -6,12 +6,18 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
 
+    public bool gameWon = false;
+    public bool gameLost = false;
+    public bool gameOngoing = true;
+
     public int currentPlayer;
 
     public List<GameObject> p1Pieces = new List<GameObject>();
     public List<GameObject> p2Pieces = new List<GameObject>();
     public List<string> p1Coords = new List<string>();
     public List<string> p2Coords = new List<string>();
+
+    public int tileCount = 0;
 
     void Awake()
     {
@@ -42,6 +48,54 @@ public class GameManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+    }
+
+    public void checkIfGameOver()
+    {
+        if (p1Pieces.Count + p2Pieces.Count >= tileCount)
+        {
+            // Tie! No more pieces can be placed.
+            gameOngoing = false;
+        }
+
+        if (gameOngoing)
+        {
+            if (gameWon || gameLost)
+            {
+                // A Win/Lose condition has been met.
+                gameOngoing = false;
+            }
+        }
+
+        if (!gameOngoing)
+        {
+            gameOver();
+        }
+    }
+
+    void gameOver()
+    {
+        if (!gameWon && !gameLost)
+        {
+            Debug.Log("Tie! No more pieces can be placed!");
+            return;
+        }
+
+        int winner = 0;
+        int loser = 0;
+
+        if (gameWon)
+        {
+            winner = currentPlayer;
+            loser = 3 - currentPlayer;
+        }
+        else if (gameLost)
+        {
+            loser = currentPlayer;
+            winner = 3 - currentPlayer;
+        }
+
+        Debug.Log("The game is now over. Player " + winner + "wins!");
     }
 
     public void swapPlayer()
@@ -75,5 +129,10 @@ public class GameManager : MonoBehaviour
     public void addP2Coords(string coord)
     {
         p2Coords.Add(coord);
+    }
+
+    public void countTile()
+    {
+        tileCount++;
     }
 }
