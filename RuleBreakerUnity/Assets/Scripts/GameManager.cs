@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
 
+    public int currentPlayer;
+
     public List<GameObject> p1Pieces = new List<GameObject>();
     public List<GameObject> p2Pieces = new List<GameObject>();
 
@@ -27,7 +29,23 @@ public class GameManager : MonoBehaviour
     {
         p1Pieces.Clear();
         p2Pieces.Clear();
+
+        currentPlayer = Random.Range(1, 2);
+        Debug.Log("Player " + currentPlayer + " goes first.");
     }
+
+    public void swapPlayer()
+    {
+        if (currentPlayer == 1)
+        {
+            currentPlayer = 2;
+        }
+        else
+        {
+            currentPlayer = 1;
+        }
+    }
+
 
     public void addP1Piece(GameObject piece)
     {

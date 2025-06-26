@@ -36,8 +36,9 @@ public class Tile : MonoBehaviour
         return (parentName, transform.name);
     }
 
-    public void placePiece(int currentPlayer)
+    public void placePiece()
     {
+        int currentPlayer = gameManager.currentPlayer;
         pieceTeam = currentPlayer;
         hasPiece = true;
         isLegal = false;
@@ -51,6 +52,8 @@ public class Tile : MonoBehaviour
         {
             gameManager.addP2Piece(piece);
         }
+
+        gameManager.swapPlayer();
     }
 
     void OnMouseEnter()
@@ -72,7 +75,7 @@ public class Tile : MonoBehaviour
             rend.material.color -= new Color(0, 0, 0.1F) * Time.deltaTime;
             if (Input.GetMouseButtonDown(0))
             {
-                placePiece(1);
+                placePiece();
                 rend.material.color = Color.red;
             }
         }
