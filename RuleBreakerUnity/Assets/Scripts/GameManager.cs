@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public bool gameLost = false;
     public bool gameOngoing = true;
 
+    public GameObject allTiles;
+
     public int currentPlayer;
 
     public List<GameObject> p1Pieces = new List<GameObject>();
@@ -25,7 +27,7 @@ public class GameManager : MonoBehaviour
     public List<string> p1Coords = new List<string>();
     public List<string> p2Coords = new List<string>();
 
-    public int tileCount = 0;
+    public List<GameObject> tiles = new List<GameObject>();
 
     public string winCon;
     public string loseCon;
@@ -61,11 +63,30 @@ public class GameManager : MonoBehaviour
         p2Coords.Clear();
 
         conditions.Clear();
+        tiles.Clear();
 
         foreach (Transform child in this.transform)
         {
             Destroy(child.gameObject);
         }
+
+        allTiles = GameObject.Find("Tiles");
+
+        // Get all the tiles in the game
+        foreach (Transform row in allTiles.transform)
+        {
+            {
+                foreach (Transform tile in row)
+                {
+                    if (tile != null)
+                    {
+                        tiles.Add(tile.gameObject);
+                    }
+                }
+            }
+        }
+
+
 
         // 21 Conditions currently implemented
         // By default, if all 3 permissions are disabled, we go for 3 piece wins only.
@@ -133,7 +154,7 @@ public class GameManager : MonoBehaviour
 
     public void checkIfGameOver()
     {
-        if (p1Pieces.Count + p2Pieces.Count >= tileCount)
+        if (p1Pieces.Count + p2Pieces.Count >= tiles.Count)
         {
             // Tie! No more pieces can be placed.
             gameOngoing = false;
@@ -159,6 +180,11 @@ public class GameManager : MonoBehaviour
 
     void gameOver()
     {
+        foreach (GameObject tile in tiles)
+        {
+            tile.GetComponent<Tile>().setTileLegal(false);
+        }
+
         if (!gameWon && !gameLost)
         {
             Debug.Log("Tie! No more pieces can be placed!");
@@ -215,9 +241,14 @@ public class GameManager : MonoBehaviour
         p2Coords.Add(coord);
     }
 
-    public void countTile()
+    public void addTile(GameObject tile)
     {
-        tileCount++;
+        tiles.Add(tile);
+    }
+
+    public void setTileLegal(GameObject tile, bool isLegal)
+    {
+        tile.GetComponent<Tile>().setTileLegal(isLegal);
     }
 
     bool checkIfConditionMet(string condition)
