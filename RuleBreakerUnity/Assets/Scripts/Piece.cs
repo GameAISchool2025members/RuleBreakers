@@ -19,6 +19,6 @@ public class Piece : MonoBehaviour
     public void SetCoords(string coords)
     {
         this.coords = coords;
-        Debug.Log(this.coords);
+        //Debug.Log(this.coords);
     }
 }

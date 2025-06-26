@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour
 
     public int tileCount = 0;
 
+    public string winCon;
+    public string loseCon;
+
     void Awake()
     {
         if (gameManager == null) // If there is no instance already
@@ -60,6 +63,9 @@ public class GameManager : MonoBehaviour
 
         if (gameOngoing)
         {
+            gameWon = checkIfConditionMet(winCon);
+            gameLost = checkIfConditionMet(loseCon);
+
             if (gameWon || gameLost)
             {
                 // A Win/Lose condition has been met.
@@ -95,7 +101,7 @@ public class GameManager : MonoBehaviour
             winner = 3 - currentPlayer;
         }
 
-        Debug.Log("The game is now over. Player " + winner + "wins!");
+        Debug.Log("The game is now over. Player " + winner + " wins!");
     }
 
     public void swapPlayer()
@@ -134,5 +140,135 @@ public class GameManager : MonoBehaviour
     public void countTile()
     {
         tileCount++;
+    }
+
+    bool checkIfConditionMet(string condition)
+    {
+        List<string> coordinates;
+        if (currentPlayer == 1)
+        {
+            coordinates = new List<string>(p1Coords);
+        }
+        else
+        {
+            coordinates = new List<string>(p2Coords);
+        }
+
+        if (coordinates.Count < 3)
+        {
+            return false;
+        }
+
+        bool[,] board = new bool[8, 8];
+        foreach (string coord in coordinates)
+        {
+            board[coord[0] - 'A', coord[1] - '1'] = true;
+        }
+
+        switch (condition)
+        {
+            case "3InARow":
+                if (checkHorizontal(board, 3))
+                    {  return true; }
+                if (checkVertical(board, 3))
+                    { return true; }
+                if (checkDiagonal(board, 3))
+                    { return true; }
+                return false;
+
+            case "3Horizontal":
+                return checkHorizontal(board, 3);
+            case "3Vertical":
+                return checkVertical(board, 3);
+            case "3Diagonal":
+                return checkDiagonal(board, 3);
+
+            default:
+                return false;
+        }
+    }
+
+    bool checkVertical(bool[,] board, int x)
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            int count = 0;
+            for (int col = 0; col < 8; col++)
+            {
+                if (board[row, col])
+                {
+                    count++;
+                    if (count >= x)
+                        return true;
+                }
+                else
+                {
+                    count = 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool checkHorizontal(bool[,] board, int x)
+    {
+        for (int col = 0; col < 8; col++)
+        {
+            int count = 0;
+            for (int row = 0; row < 8; row++)
+            {
+                if (board[row, col])
+                {
+                    count++;
+                    if (count >= x)
+                        return true;
+                }
+                else
+                {
+                    count = 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool checkDiagonal(bool[,] board, int x)
+    {
+        for (int row = 0; row <= 8 - x; row++)
+        {
+            // Top-Left to Bottom-Right \
+            for (int col = 0; col <= 8 - x; col++)
+            {
+                int count = 0;
+                for (int i = 0; i < x; i++)
+                {
+                    if (board[row + i, col + i])
+                        count++;
+                    else
+                        break;
+                }
+
+                if (count >= x)
+                    return true;
+            }
+
+            // Bottom-Left to Top-Right /
+            for (int col = x - 1; col < 8; col++)
+            {
+                int count = 0;
+                for (int i = 0; i < x; i++)
+                {
+                    if (board[row + i, col - i])
+                        count++;
+                    else
+                        break;
+                }
+
+                if (count == x)
+                    return true;
+            }
+        }
+
+        return false;
     }
 }
