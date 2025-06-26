@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public static class ListExtenstions
+{
+    public static void AddMany<T>(this List<T> list, params T[] elements)
+    {
+        list.AddRange(elements);
+    }
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
@@ -21,6 +29,11 @@ public class GameManager : MonoBehaviour
 
     public string winCon;
     public string loseCon;
+    public List<string> conditions = new List<string>();
+    public bool randomConditions = false;
+    public bool allow3Wins = true;
+    public bool allow4Wins = true;
+    public bool allow5Wins = true;
 
     void Awake()
     {
@@ -47,10 +60,75 @@ public class GameManager : MonoBehaviour
         p1Coords.Clear();
         p2Coords.Clear();
 
+        conditions.Clear();
+
         foreach (Transform child in this.transform)
         {
             Destroy(child.gameObject);
         }
+
+        // 21 Conditions currently implemented
+        // By default, if all 3 permissions are disabled, we go for 3 piece wins only.
+
+        if (!allow3Wins && !allow4Wins && !allow5Wins)
+        {
+            allow3Wins = true;
+        }
+
+        if (allow3Wins)
+        {
+            conditions.AddMany("3InARow", "3Horizontal", "3Vertical", "3Diagonal", "3L");
+        }
+        if (allow4Wins)
+        {
+            conditions.AddMany("4InARow", "4Horizontal", "4Vertical", "4Diagonal",
+                                "4L", "4J", "4LJ", "4T", "Square", "Diamond");
+        }
+        if (allow5Wins)
+        {
+            conditions.AddMany("5InARow", "5Horizontal", "5Vertical", "5Diagonal", "Plus", "Cross");
+        }
+
+        if (randomConditions)
+        {
+            int winInt = getNewCondition();
+            winCon = conditions[winInt];
+
+            int loseInt = -1;
+
+            while (loseInt < 0)
+            {
+                loseInt = getNewCondition();
+                loseCon = conditions[loseInt];
+
+                // We make sure that we do not have any conflicts/unwanted wincons
+                if (conditionConflict())
+                {
+                    loseInt = -1;
+                }
+            }
+        }
+
+        else
+        {
+            winCon = conditions[0];
+            loseCon = conditions[3];
+        }
+    }
+
+    int getNewCondition()
+    {
+        return Random.Range(0, conditions.Count);
+    }
+
+    bool conditionConflict()
+    {
+        if (winCon == loseCon)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public void checkIfGameOver()
