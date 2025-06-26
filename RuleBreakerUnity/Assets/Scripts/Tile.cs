@@ -28,6 +28,15 @@ public class Tile : MonoBehaviour
         pieceTeam = 0;
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        if (isLegal)
+        {
+            rend.material.color = Color.blue;
+        }
+        else
+        {
+            rend.material.color = Color.red;
+        }
     }
 
     (string, string) GetCoordinates()
@@ -42,7 +51,9 @@ public class Tile : MonoBehaviour
         pieceTeam = currentPlayer;
         hasPiece = true;
         isLegal = false;
+        rend.material.color = Color.red;
         GameObject piece = Instantiate(pieces[currentPlayer - 1], spawner.transform.position, spawner.transform.rotation);
+        piece.transform.SetParent(gameManager.transform);
         
         if (currentPlayer == 1)
         {
@@ -56,33 +67,15 @@ public class Tile : MonoBehaviour
         gameManager.swapPlayer();
     }
 
-    void OnMouseEnter()
-    {
-        if (isLegal)
-        {
-            rend.material.color = Color.blue;
-        }
-        else
-        {
-            rend.material.color = Color.red;
-        }
-    }
-
     void OnMouseOver()
     {
         if (isLegal)
         {
-            rend.material.color -= new Color(0, 0, 0.1F) * Time.deltaTime;
             if (Input.GetMouseButtonDown(0))
             {
                 placePiece();
                 rend.material.color = Color.red;
             }
         }
-    }
-
-    void OnMouseExit()
-    {
-        rend.material.color = Color.white;
     }
 }

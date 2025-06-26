@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         p1Pieces.Clear();
         p2Pieces.Clear();
 
-        currentPlayer = Random.Range(1, 2);
+        currentPlayer = Random.Range(1, 3); // Choose between 1 and 2
         Debug.Log("Player " + currentPlayer + " goes first.");
     }
 
