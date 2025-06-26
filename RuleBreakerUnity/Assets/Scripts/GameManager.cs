@@ -165,23 +165,91 @@ public class GameManager : MonoBehaviour
             board[coord[0] - 'A', coord[1] - '1'] = true;
         }
 
+        int x = 0;
+
         switch (condition)
         {
             case "3InARow":
-                if (checkHorizontal(board, 3))
-                    {  return true; }
-                if (checkVertical(board, 3))
-                    { return true; }
-                if (checkDiagonal(board, 3))
-                    { return true; }
-                return false;
+                x = 3;
+                if (checkHorizontal(board, x))
+                { return true; }
+                if (checkVertical(board, x))
+                { return true; }
+                return (checkDiagonal(board, x));
 
             case "3Horizontal":
-                return checkHorizontal(board, 3);
+                x = 3;
+                return checkHorizontal(board, x);
             case "3Vertical":
-                return checkVertical(board, 3);
+                x = 3;
+                return checkVertical(board, x);
             case "3Diagonal":
-                return checkDiagonal(board, 3);
+                x = 3;
+                return checkDiagonal(board, x);
+
+            case "3L":
+                return check3L(board);
+
+            // 4 In A Row
+
+            case "4InARow":
+                x = 4;
+                if (checkHorizontal(board, x))
+                { return true; }
+                if (checkVertical(board, x))
+                { return true; }
+                return (checkDiagonal(board, x));
+
+            case "4Horizontal":
+                x = 4;
+                return checkHorizontal(board, x);
+            case "4Vertical":
+                x = 4;
+                return checkVertical(board, x);
+            case "4Diagonal":
+                x = 4;
+                return checkDiagonal(board, x);
+
+            case "4L":
+                return check4L(board);
+            case "4J":
+                return check4J(board);
+            case "4LJ":
+                if (check4L(board))
+                    { return true; }
+                return (check4J(board));
+
+            case "4T":
+                return check4T(board);
+            case "Square":
+                return checkSquare(board);
+            case "Diamond":
+                return checkDiamond(board);
+
+            // 5 In A Row
+
+            case "5InARow":
+                x = 5;
+                if (checkHorizontal(board, x))
+                { return true; }
+                if (checkVertical(board, x))
+                { return true; }
+                return (checkDiagonal(board, x));
+
+            case "5Horizontal":
+                x = 5;
+                return checkHorizontal(board, x);
+            case "5Vertical":
+                x = 5;
+                return checkVertical(board, x);
+            case "5Diagonal":
+                x = 5;
+                return checkDiagonal(board, x);
+
+            case "Plus":
+                return checkPlus(board);
+            case "Cross":
+                return checkCross(board);
 
             default:
                 return false;
@@ -268,7 +336,248 @@ public class GameManager : MonoBehaviour
                     return true;
             }
         }
+        return false;
+    }
+
+    bool check3L(bool[,] board)
+    {
+        // Possible L-Block/J-Block patterns (relative to top-left)
+        int[][][] lBlocks = new int[][][]
+        {
+            new[] { new[] {0,0}, new[] {1,0}, new[] {1,1}},
+            new[] { new[] {0,0}, new[] {1,0}, new[] {1,-1}},
+
+            new[] { new[] {0,0}, new[] {0,1}, new[] {1,1}},
+            new[] { new[] {0,0}, new[] {0,1}, new[] {-1,1}},
+
+            new[] { new[] {0,0}, new[] {-1,0}, new[] {-1,1}},
+            new[] { new[] {0,0}, new[] {-1,0}, new[] {-1,-1}},
+
+            new[] { new[] {0,0}, new[] {0,-1}, new[] {-1,1}},
+            new[] { new[] {0,0}, new[] {0,-1}, new[] {-1,-1}},
+        };
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                foreach (var l in lBlocks)
+                {
+                    bool match = true;
+
+                    foreach (var offset in l)
+                    {
+                        int r = row + offset[0];
+                        int c = col + offset[1];
+
+                        if (r < 0 || r >= 8 || c < 0 || c >= 8 || !board[r, c])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool check4L(bool[,] board)
+    {
+        // Possible L-Block patterns (relative to top-left)
+        int[][][] lBlocks = new int[][][]
+        {
+            new[] { new[] {0,0}, new[] {1,0}, new[] {2,0}, new[] {2,1}},
+            new[] { new[] {0,0}, new[] {0,1}, new[] {0,2}, new[] {1,0}},
+            new[] { new[] {0,0}, new[] {0,1}, new[] {1,1}, new[] {2,1}},
+            new[] { new[] {0,2}, new[] {1,0}, new[] {1,1}, new[] {1,2}},
+        };
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                foreach (var l in lBlocks)
+                {
+                    bool match = true;
+
+                    foreach (var offset in l)
+                    {
+                        int r = row + offset[0];
+                        int c = col + offset[1];
+
+                        if (r < 0 || r >= 8 || c < 0 || c >= 8 || !board[r, c])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool check4J(bool[,] board)
+    {
+        // Possible J-Block patterns (relative to top-left)
+        int[][][] jBlocks = new int[][][]
+        {
+            new[] { new[] {0,1}, new[] {1,1}, new[] {2,1}, new[] {2,0}},
+            new[] { new[] {0,0}, new[] {1,0}, new[] {1,1}, new[] {1,2}},
+            new[] { new[] {0,0}, new[] {0,1}, new[] {1,0}, new[] {2,0}},
+            new[] { new[] {0,0}, new[] {0,1}, new[] {0,2}, new[] {1,2}},
+        };
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                foreach (var j in jBlocks)
+                {
+                    bool match = true;
+
+                    foreach (var offset in j)
+                    {
+                        int r = row + offset[0];
+                        int c = col + offset[1];
+
+                        if (r < 0 || r >= 8 || c < 0 || c >= 8 || !board[r, c])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool check4T(bool[,] board)
+    {
+        // Possible T-Block patterns
+        int[][][] tBlocks = new int[][][]
+        {
+            // Up
+            new[] { new[] {0,0}, new[] {0,-1}, new[] {0,1}, new[] {1,0} },
+            // Down
+            new[] { new[] {0,0}, new[] {0,-1}, new[] {0,1}, new[] {-1,0} },
+            // Left
+            new[] { new[] {0,0}, new[] {-1,0}, new[] {1,0}, new[] {0,1} },
+            // Right
+            new[] { new[] {0,0}, new[] {-1,0}, new[] {1,0}, new[] {0,-1} },
+        };
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                foreach (var t in tBlocks)
+                {
+                    bool match = true;
+                    foreach (var offset in t)
+                    {
+                        int r = row + offset[0];
+                        int c = col + offset[1];
+
+                        if (r < 0 || r >= 8 || c < 0 || c >= 8 || !board[r, c])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match)
+                        return true;
+                }
+            }
+        }
 
         return false;
     }
+
+    bool checkSquare(bool[,] board)
+    {
+        for (int row = 0; row < 7; row++)
+        {
+            for (int col = 0; col < 7; col++)
+            {
+                if (board[row, col] &&
+                    board[row, col + 1] &&
+                    board[row + 1, col] &&
+                    board[row + 1, col + 1])
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool checkDiamond(bool[,] board)
+    {
+        for (int row = 1; row < 7; row++)
+        {
+            for (int col = 1; col < 7; col++)
+            {
+                if (board[row - 1, col] &&
+                    board[row + 1, col] &&
+                    board[row, col - 1] &&
+                    board[row, col + 1])
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool checkPlus(bool[,] board)
+    {
+        for (int row = 1; row < 7; row++)
+        {
+            for (int col = 1; col < 7; col++)
+            {
+                if (board[row, col] &&        
+                    board[row - 1, col] &&    
+                    board[row + 1, col] &&    
+                    board[row, col - 1] &&    
+                    board[row, col + 1])      
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool checkCross(bool[,] board)
+    {
+        for (int row = 1; row < 7; row++)
+        {
+            for (int col = 1; col < 7; col++)
+            {
+                if (board[row, col] &&
+                    board[row - 1, col - 1] &&
+                    board[row - 1, col + 1] &&
+                    board[row + 1, col - 1] &&
+                    board[row + 1, col + 1])
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

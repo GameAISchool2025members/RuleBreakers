@@ -4213,6 +4213,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
+      propertyPath: winCon
+      value: 4L
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
+      propertyPath: loseCon
+      value: 3Horizontal
+      objectReference: {fileID: 0}
     - target: {fileID: 7213924539154690211, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
