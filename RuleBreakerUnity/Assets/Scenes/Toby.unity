@@ -4223,19 +4223,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: allow3Wins
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: allow4Wins
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: allow5Wins
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: randomConditions
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7213924539154690211, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: m_LocalPosition.x
