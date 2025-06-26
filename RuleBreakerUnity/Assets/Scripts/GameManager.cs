@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class ListExtenstions
 {
@@ -41,7 +42,7 @@ public class GameManager : MonoBehaviour
     {
         if (gameManager == null) // If there is no instance already
         {
-            DontDestroyOnLoad(gameObject); // Keep the GameObject, this component is attached to, across different scenes
+            // DontDestroyOnLoad(gameObject); // Keep the GameObject, this component is attached to, across different scenes
             gameManager = this;
         }
         else if (gameManager != this) // If there is already an instance and it's not `this` instance
@@ -206,6 +207,8 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log("The game is now over. Player " + winner + " wins!");
+
+        StartCoroutine(LoadMainMenu()); 
     }
 
     public void swapPlayer()
@@ -687,6 +690,12 @@ public class GameManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private IEnumerator LoadMainMenu()
+    {
+        yield return new WaitForSeconds(5);
+        SceneManager.LoadScene("MainMenu");
     }
 
 }
