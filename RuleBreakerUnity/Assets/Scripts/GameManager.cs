@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> p1Pieces = new List<GameObject>();
     public List<GameObject> p2Pieces = new List<GameObject>();
+    public List<string> p1Coords = new List<string>();
+    public List<string> p2Coords = new List<string>();
 
     void Awake()
     {
@@ -27,11 +29,19 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        currentPlayer = Random.Range(1, 3); // Choose between 1 and 2
+        Debug.Log("Player " + currentPlayer + " goes first.");
+
         p1Pieces.Clear();
         p2Pieces.Clear();
 
-        currentPlayer = Random.Range(1, 3); // Choose between 1 and 2
-        Debug.Log("Player " + currentPlayer + " goes first.");
+        p1Coords.Clear();
+        p2Coords.Clear();
+
+        foreach (Transform child in this.transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     public void swapPlayer()
@@ -55,5 +65,15 @@ public class GameManager : MonoBehaviour
     public void addP2Piece(GameObject piece)
     {
         p2Pieces.Add(piece);
+    }
+
+    public void addP1Coords(string coord)
+    {
+        p1Coords.Add(coord);
+    }
+
+    public void addP2Coords(string coord)
+    {
+        p2Coords.Add(coord);
     }
 }

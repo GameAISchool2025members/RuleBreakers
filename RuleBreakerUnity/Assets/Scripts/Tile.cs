@@ -7,7 +7,7 @@ public class Tile : MonoBehaviour
     public bool hasPiece;
     public int pieceTeam;
 
-    public (string, string) coords;
+    public string coords;
 
     public bool isLegal = true;
 
@@ -39,10 +39,10 @@ public class Tile : MonoBehaviour
         }
     }
 
-    (string, string) GetCoordinates()
+    string GetCoordinates()
     {
         var parentName = transform.parent.name;
-        return (parentName, transform.name);
+        return (parentName + transform.name);
     }
 
     public void placePiece()
@@ -52,16 +52,22 @@ public class Tile : MonoBehaviour
         hasPiece = true;
         isLegal = false;
         rend.material.color = Color.red;
-        GameObject piece = Instantiate(pieces[currentPlayer - 1], spawner.transform.position, spawner.transform.rotation);
-        piece.transform.SetParent(gameManager.transform);
-        
+        GameObject newPiece = Instantiate(pieces[currentPlayer - 1], spawner.transform.position, spawner.transform.rotation);
+        newPiece.transform.SetParent(gameManager.transform);
+
+        Piece piece = newPiece.GetComponent<Piece>();
+        piece.SetPlayer(currentPlayer);
+        piece.SetCoords(coords);
+
         if (currentPlayer == 1)
         {
-            gameManager.addP1Piece(piece);
+            gameManager.addP1Piece(newPiece);
+            gameManager.addP1Coords(coords);
         }
         else
         {
-            gameManager.addP2Piece(piece);
+            gameManager.addP2Piece(newPiece);
+            gameManager.addP2Coords(coords);
         }
 
         gameManager.swapPlayer();
