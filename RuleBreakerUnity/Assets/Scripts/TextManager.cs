@@ -68,12 +68,17 @@ public class TextManager : MonoBehaviour
         
         // Create the validation prompt
         string prompt = CreateValidationPrompt(rule);
+
+        string rulePrompt = CreateRulePrompt(rule);
         
         // Send to Groq
         bool responseReceived = false;
+        bool ruleResponseReceived = false;
         string llmResponse = "";
+        string llmRuleResponse = "";
         bool success = false;
-        
+        bool successRule = false;
+
         groqClient.SendMessage(prompt, (response, isSuccess) =>
         {
             llmResponse = response;
@@ -90,10 +95,41 @@ public class TextManager : MonoBehaviour
         // Process the response
         if (success)
         {
-            ProcessValidationResponse(rule, llmResponse);
-            //JsonConverter.RuleResponse response = JsonConverter.ParseRuleResponseJSONToObject(llmResponse, out bool valid);
-            //Debug.Log("Response: " + response.valid + " " + response.reason);
+            //ProcessValidationResponse(rule, llmResponse);
+            JsonConverter.RuleResponse response = JsonConverter.ParseRuleResponseJSONToObject(llmResponse, out bool valid);
+            Debug.Log("Response: " + response.status + " " + response.reason);
             //ReadLLMOutput(response.reason);
+
+            if (!valid)
+            {
+                Debug.LogError($"Validation failed: {llmResponse}");
+                ReadLLMOutput($"Validation failed: {llmResponse}");
+            }
+            else
+            {
+                if (!response.status)
+                {
+                    groqClient.SendMessage(rulePrompt, (response, isSuccess) =>
+                    {
+                        llmRuleResponse = response;
+                        successRule = isSuccess;
+                        ruleResponseReceived = true;
+                    });
+
+                    if (successRule)
+                    {
+                        JsonConverter.RuleResponse ruleResponse = JsonConverter.ParseRuleResponseJSONToObject(llmRuleResponse, out bool validRule);
+                        Debug.Log("Rule: " + ruleResponse.rule);
+
+                        if (!validRule)
+                        {
+                            Debug.LogError($"Rule creation failed: {llmRuleResponse}");
+                            ReadLLMOutput($"Rule creation failed: {llmRuleResponse}");
+                        }
+                    }
+                    
+                }
+            }
         }
         else
         {
@@ -142,6 +178,49 @@ Example response:
 {{
     ""status"": true,
     ""reason"": ""The rule follows all super rules and creates valid game constraints.""
+}}";
+    }
+
+    private string CreateRulePrompt(string rule)
+    {
+        // Get current board state as JSON
+        string boardStateJson = JsonConverter.BoardStateToJSON();
+
+        
+        return $@"You are a game rule validator and creator for a board game where players move pieces on a 8x8 grid. The board is labeled A1 to H8, with A1 being the bottom left and H8 being the top right. There is a dynamic winning and losing condition which can change at the start of the game but stays static throughtout the game.
+
+Each player can either place a piece on the board or create a rule that the next player needs to follow in the next turn. These rules are called Joker Rules. 
+
+
+You analyzed the following rule and found it to be invalid. You need to create a new rule that is valid but similar the rule you analyzed.
+
+The rule you analyzed is the following:
+""{rule}""
+
+Validate the new rule by checking the following criteria, also known as Super Rules:
+1. When referring to rows, horizontal, vertical or diagonal are all valid.
+2. A piece on the board always stays in the same place and never leaves the board.
+3. A piece can be flipped to the opposing color if a rule allows it.
+4. Joker rule cannot change win or lose condition.
+5. Rules cannot prevent players from taking their turn.
+6. You cannot make a rule that completely blocks a player from placing a game piece; there must always be at least one viable location.
+7. Rules can describe patterns, conditions, and game piece attributes, but not refer to individual turns or past moves.
+8. A rule cannot make the board state invalid, unsolvable, or fully locked.
+9. When referring to adjacency, the surrounding 8 tiles are valid.
+10. A Joker Rule cannot change super rules.
+11. A Joker Rule can not contain a specific coordinate. 
+
+Current board state:
+{boardStateJson}
+
+Return your response strictly as a JSON dictionary in exactly this format:
+{{
+    ""rule"": ""New rule""
+}}
+
+FOr example, you were provided a rule ""Player can only place on A1"" which you found invalid and you created the following new rule:
+{{
+    ""rule"": ""Player can only place on column A""
 }}";
     }
     
