@@ -129,6 +129,31 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4452007310908949777, guid: 9959e21d8dc246d47bf9ebca66eee687, type: 3}
   m_PrefabInstance: {fileID: 1949758223}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &21534228 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1251298027124822119, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
+  m_PrefabInstance: {fileID: 1767978696}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &21534229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21534228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad35505ee9d58d749a20799e51512cf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testBoardStateToJSON: 0
+  testRulePromptToJSON: 0
+  newRule: This is a new rule.
+  testParseValidPlacementJSONToDictionary: 0
+  placementJSONToParse: Please add JSON.
+  testParseRuleResponseJSONToTuple: 0
+  ruleJSONToParse: Please add JSON.
+  response: 
 --- !u!1001 &24800523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4017,6 +4042,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 85546930}
+  groqClient: {fileID: 0}
+  gameContext: a board game where players move pieces on a grid
   llmInput: 
   llmOutput: 
   canSend: 1
@@ -5282,7 +5309,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1251298027124822119, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 21534229}
   m_SourcePrefab: {fileID: 100100000, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
 --- !u!1001 &1775948120
 PrefabInstance:
