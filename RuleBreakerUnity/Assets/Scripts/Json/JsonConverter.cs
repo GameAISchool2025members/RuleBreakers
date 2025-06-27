@@ -122,7 +122,23 @@ public class JsonConverter : MonoBehaviour
             return placementDict;
         }
 
+        //Do we have all required coordinates?
+        for (char file = 'A'; file <= 'H'; file++)
+        {
+            for (int rank = 1; rank <= 8; rank++)
+            {
+                string coord = $"{file}{rank}";
 
+                if (!placementDict.ContainsKey(coord))
+                {
+                    //Return early
+                    Debug.LogError($"Key {coord} is missing!\nNote that other keys may be missing as well.");
+                    return placementDict;
+                }
+            }
+        }
+
+        //All tests successful!
         valid = true;
         return placementDict;
     }

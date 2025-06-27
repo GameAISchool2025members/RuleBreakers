@@ -102,7 +102,15 @@ public class TextManager : MonoBehaviour
     
     private string CreateValidationPrompt(string rule)
     {
+        // Get current board state as JSON
+        string boardStateJson = JsonConverter.BoardStateToJSON();
+
+        Debug.Log("Board state: " + boardStateJson);
+        
         return $@"You are a game rule validator for {gameContext}. 
+
+Current board state:
+{boardStateJson}
 
 Please analyze the following rule and determine if it is valid:
 ""{rule}""
