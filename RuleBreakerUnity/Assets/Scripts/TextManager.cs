@@ -7,6 +7,7 @@ using TMPro;
 public class TextManager : MonoBehaviour
 {
     public TMP_Text inputField;
+    public TMP_Text outputField;
 
     public string llmInput;
     public string llmOutput;
@@ -46,5 +47,6 @@ public class TextManager : MonoBehaviour
         llmOutput = output;
         Debug.Log(llmOutput);
         canSend = true;
+        outputField.text = llmOutput;
     }
 }

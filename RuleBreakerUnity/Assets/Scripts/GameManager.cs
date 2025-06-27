@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
 
     public int currentPlayer;
     public TMP_Text currentPlayerText;
+    public TMP_Text winConText;
+    public TMP_Text loseConText;
 
     public List<GameObject> p1Pieces = new List<GameObject>();
     public List<GameObject> p2Pieces = new List<GameObject>();
@@ -149,6 +151,9 @@ public class GameManager : MonoBehaviour
             winCon = conditions[0];
             loseCon = conditions[3];
         }
+
+        winConText.text = winCon;
+        loseConText.text = loseCon;
     }
 
     int getNewCondition()
