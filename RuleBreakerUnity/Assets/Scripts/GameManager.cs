@@ -206,7 +206,8 @@ public class GameManager : MonoBehaviour
     {
         foreach (GameObject tile in tiles)
         {
-            tile.GetComponent<Tile>().setTileLegal(false);
+            tile.GetComponent<Tile>().setTileLegal(false, 1);
+            tile.GetComponent<Tile>().setTileLegal(false, 2);
         }
 
         if (!gameWon && !gameLost)
@@ -278,7 +279,7 @@ public class GameManager : MonoBehaviour
 
     public void setTileLegal(GameObject tile, bool isLegal)
     {
-        tile.GetComponent<Tile>().setTileLegal(isLegal);
+        tile.GetComponent<Tile>().setTileLegal(isLegal, currentPlayer);
     }
 
     bool checkIfConditionMet(string condition)

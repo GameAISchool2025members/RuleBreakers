@@ -9,7 +9,8 @@ public class Tile : MonoBehaviour
 
     public string coords;
 
-    public bool isLegal = true;
+    public bool isLegalForP1 = true;
+    public bool isLegalForP2 = true;
 
     public List<GameObject> pieces = new List<GameObject>();
     public GameManager gameManager;
@@ -43,7 +44,7 @@ public class Tile : MonoBehaviour
         int currentPlayer = gameManager.currentPlayer;
         pieceTeam = currentPlayer;
         hasPiece = true;
-        setTileLegal(false);
+        setTileLegal(false, currentPlayer);
         GameObject newPiece = Instantiate(pieces[currentPlayer - 1], spawner.transform.position, spawner.transform.rotation);
         newPiece.transform.SetParent(gameManager.transform);
 
@@ -67,7 +68,8 @@ public class Tile : MonoBehaviour
 
     void OnMouseOver()
     {
-        if (isLegal)
+        int player = GameManager.gameManager.currentPlayer;
+        if ((player == 1 && isLegalForP1) || (player == 2 && isLegalForP2))
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -76,21 +78,40 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void setTileLegal(bool isLegal)
+    public void setTileLegal(bool isLegal, int player)
     {
-        this.isLegal = isLegal;
+        if (player == 1)
+        {
+            this.isLegalForP1 = isLegal;
+        }
+        else if (player == 2)
+        {
+            this.isLegalForP2 = isLegal;
+        }
+
         changeColour();
     }
 
     void changeColour()
     {
+        int player = GameManager.gameManager.currentPlayer;
+        bool isLegal = false;
+
+        if (player == 1 && isLegalForP1)
+        {
+            isLegal = isLegalForP1;
+        }
+        if (player == 2 && isLegalForP2)
+        {
+            isLegal = isLegalForP2;
+        }
+
         if (isLegal)
         {
             rend.material.color = Color.blue;
         }
         else
         {
-
             rend.material.color = Color.red;
         }
     }
