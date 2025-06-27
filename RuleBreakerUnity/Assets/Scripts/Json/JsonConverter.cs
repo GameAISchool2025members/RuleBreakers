@@ -48,7 +48,7 @@ public class JsonConverter : MonoBehaviour
         if (testParseValidPlacementJSONToDictionary)
         {
             testParseValidPlacementJSONToDictionary = false;
-            Dictionary<string, bool> result = ParseValidPlacementJSONToDictionary(placementJSONToParse, out bool valid);
+            Dictionary<string, PlacementEntry> result = ParseValidPlacementJSONToDictionary(placementJSONToParse, out bool valid);
             response = valid.ToString();
         }
     }
@@ -88,9 +88,15 @@ public class JsonConverter : MonoBehaviour
         return json;
     }
 
-    public static Dictionary<string, bool> ParseValidPlacementJSONToDictionary(string json, out bool valid)
+    public class PlacementEntry
     {
-        Dictionary<string, bool>  placementDict = new Dictionary<string, bool>();
+        public bool P1 { get; set; }
+        public bool P2 { get; set; }
+    }
+
+    public static Dictionary<string, PlacementEntry> ParseValidPlacementJSONToDictionary(string json, out bool valid)
+    {
+        Dictionary<string, PlacementEntry>  placementDict = new Dictionary<string, PlacementEntry>();
         valid = false;
 
         //First check if string is valid json
@@ -114,7 +120,7 @@ public class JsonConverter : MonoBehaviour
         //Can we deserialize into string bool dict?
         try
         {
-            placementDict = JsonConvert.DeserializeObject<Dictionary<string, bool>>(json);
+            placementDict = JsonConvert.DeserializeObject<Dictionary<string, PlacementEntry>>(json);
         }
         catch (JsonReaderException e)
         {
