@@ -63,8 +63,6 @@ public class Tile : MonoBehaviour
         }
 
         gameManager.checkIfGameOver();
-
-        gameManager.swapPlayer();
     }
 
     void OnMouseOver()
