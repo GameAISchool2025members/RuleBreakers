@@ -92,7 +92,7 @@ public class Tile : MonoBehaviour
         changeColour();
     }
 
-    void changeColour()
+    public void changeColour()
     {
         int player = GameManager.gameManager.currentPlayer;
         bool isLegal = false;
@@ -101,7 +101,7 @@ public class Tile : MonoBehaviour
         {
             isLegal = isLegalForP1;
         }
-        if (player == 2 && isLegalForP2)
+        else if (player == 2 && isLegalForP2)
         {
             isLegal = isLegalForP2;
         }
