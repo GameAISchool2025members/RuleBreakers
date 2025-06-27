@@ -6135,6 +6135,7 @@ GameObject:
   - component: {fileID: 1287363764}
   - component: {fileID: 1287363763}
   - component: {fileID: 1287363767}
+  - component: {fileID: 1287363768}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -6244,10 +6245,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 85546930}
-  outputField: {fileID: 92192716}
+  groqClient: {fileID: 0}
+  gameContext: a board game where players move pieces on a grid
   llmInput: 
   llmOutput: 
   canSend: 1
+--- !u!114 &1287363768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1287363762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 681c1d247cff8ca439365aa60bb65cbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  apiKey: 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
+  model: llama3-70b-8192
 --- !u!1 &1293842533
 GameObject:
   m_ObjectHideFlags: 0
