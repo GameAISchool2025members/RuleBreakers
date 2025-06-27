@@ -24,6 +24,10 @@ public class JsonConverter : MonoBehaviour
     public bool testParseRuleResponseJSONToObject = false;
     public string ruleJSONToParse = "Please add JSON.";
 
+    [Header(" ")]
+    public bool testParseNewRuleResponseJSONToObject = false;
+    public string newRuleJSONToParse = "Please add JSON.";
+
     [Header("Response")]
     [TextArea(10, 100)]
     public string response;
@@ -62,6 +66,13 @@ public class JsonConverter : MonoBehaviour
             testParseRuleResponseJSONToObject = false;
             RuleResponse result = ParseRuleResponseJSONToObject(ruleJSONToParse, out bool valid);
             response = $"valid parse: {valid.ToString()}\nvalid: {result.status}\nreason: {result.reason}";
+        }
+
+        if (testParseNewRuleResponseJSONToObject)
+        {
+            testParseNewRuleResponseJSONToObject=false;
+            NewRuleResponse result = ParseNewRuleResponseJSONToObject(newRuleJSONToParse, out bool valid);
+            response = $"valid parse: {valid.ToString()}\nrule: {result.rule}";
         }
     }
 
@@ -217,6 +228,59 @@ public class JsonConverter : MonoBehaviour
         }
 
 
+
+        //All tests successful!
+        valid = true;
+        return response;
+    }
+
+    public class NewRuleResponse
+    {
+        public string rule;
+    }
+
+    public static NewRuleResponse ParseNewRuleResponseJSONToObject(string json, out bool valid)
+    {
+        NewRuleResponse response = new NewRuleResponse();
+        valid = false;
+
+        //First check if string is valid json
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError("String was null or empty.");
+            return response;
+        }
+
+        JObject testObject;
+        //Can we parse it into a JObject?
+        try
+        {
+            testObject = JObject.Parse(json);
+            Debug.Log(testObject.ToString());
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into JObject: " + e.Message);
+            return response;
+        }
+
+        //Check if contents are correct
+        if (!testObject.ContainsKey("rule"))
+        {
+            Debug.LogError("Rule is missing.");
+            return response;
+        }
+
+        //Can we deserialize into string bool dict?
+        try
+        {
+            response = JsonConvert.DeserializeObject<NewRuleResponse>(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into NewRuleResponse: " + e.Message);
+            return response;
+        }
 
         //All tests successful!
         valid = true;
