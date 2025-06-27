@@ -6245,8 +6245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 85546930}
+  outputField: {fileID: 92192716}
   groqClient: {fileID: 0}
-  gameContext: a board game where players move pieces on a grid
   llmInput: 
   llmOutput: 
   canSend: 1

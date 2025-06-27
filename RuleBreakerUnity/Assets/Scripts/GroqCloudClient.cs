@@ -105,7 +105,7 @@ public class GroqCloudClient : MonoBehaviour
             model = model,
             messages = messages,
             temperature = 0.7f,
-            max_tokens = 150
+            max_tokens = 1000
         };
         
         // Convert to JSON

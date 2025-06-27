@@ -9,6 +9,7 @@ public class TextManager : MonoBehaviour
 {
     [Header("UI References")]
     public TMP_Text inputField;
+    public TMP_Text outputField;
     
     [Header("LLM Settings")]
     public GroqCloudClient groqClient;
@@ -116,25 +117,45 @@ public class TextManager : MonoBehaviour
                         ruleResponseReceived = true;
                     });
 
+                    // Wait for response
+                    while (!ruleResponseReceived)
+                    {
+                        yield return null;
+                    }
+        
+
+                    //Debug.Log("Rule prompt: " + rulePrompt);
+                    Debug.Log("Rule response: " + llmRuleResponse);
+                    Debug.Log("New Rule success: " + successRule);
+
                     if (successRule)
                     {
-                        JsonConverter.RuleResponse ruleResponse = JsonConverter.ParseRuleResponseJSONToObject(llmRuleResponse, out bool validRule);
+                        JsonConverter.NewRuleResponse ruleResponse = JsonConverter.ParseNewRuleResponseJSONToObject(llmRuleResponse, out bool validRule);
                         Debug.Log("Rule: " + ruleResponse.rule);
 
                         if (!validRule)
                         {
                             Debug.LogError($"Rule creation failed: {llmRuleResponse}");
-                            ReadLLMOutput($"Rule creation failed: {llmRuleResponse}");
+                            //ReadLLMOutput($"Rule creation failed: {llmRuleResponse}");
+                        }
+                        else
+                        {
+                            outputField.text = ruleResponse.rule;
                         }
                     }
                     
                 }
+                else
+                {
+                    outputField.text = rule;
+                }
+
             }
         }
         else
         {
             Debug.LogError($"Validation failed: {llmResponse}");
-            ReadLLMOutput($"Validation failed: {llmResponse}");
+            //ReadLLMOutput($"Validation failed: {llmResponse}");
         }
     }
     
