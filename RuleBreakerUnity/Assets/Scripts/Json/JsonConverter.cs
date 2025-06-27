@@ -7,8 +7,14 @@ using UnityEngine;
 public class JsonConverter : MonoBehaviour
 {
     [Header("This component does not need to be added to a gameobject, but comes with simple test functions.")]
+    [Header(" ")]
     public bool testBoardStateToJSON = false;
 
+    [Header(" ")]
+    public bool testRulePromptToJSON = false;
+    public string newRule = "This is a new rule.";
+
+    [Header("Response")]
     [TextArea(10,100)]
     public string response;
 
@@ -25,6 +31,12 @@ public class JsonConverter : MonoBehaviour
         {
             testBoardStateToJSON = false;
             response = BoardStateToJSON();
+        }
+
+        if (testRulePromptToJSON)
+        {
+            testRulePromptToJSON = false;
+            response = RulePromptToJSON(newRule);
         }
     }
 
@@ -48,6 +60,17 @@ public class JsonConverter : MonoBehaviour
         }
 
         string json = JsonConvert.SerializeObject(boardState, Formatting.Indented);
+        Debug.Log(json);
+        return json;
+    }
+
+    public static string RulePromptToJSON(string newPrompt)
+    {
+        Dictionary<string, string> prompt = new Dictionary<string, string>();
+
+        prompt["NewRule"] = newPrompt;
+
+        string json = JsonConvert.SerializeObject(prompt, Formatting.Indented);
         Debug.Log(json);
         return json;
     }
