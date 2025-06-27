@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
+using static JsonConverter;
 
 public static class ListExtenstions
 {
@@ -275,6 +276,17 @@ public class GameManager : MonoBehaviour
     public void addTile(GameObject tile)
     {
         tiles.Add(tile);
+    }
+
+    public void setTileLegalFromDictionary(Dictionary<string, PlacementEntry> dict)
+    {
+        foreach (GameObject g in tiles)
+        {
+            Tile t = g.GetComponent<Tile>();
+            PlacementEntry p = dict[t.coords];
+            t.isLegalForP1 = p.P1;
+            t.isLegalForP2 = p.P2;
+        }
     }
 
     public void setTileLegal(GameObject tile, bool isLegal)
