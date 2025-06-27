@@ -91,6 +91,9 @@ public class TextManager : MonoBehaviour
         if (success)
         {
             ProcessValidationResponse(rule, llmResponse);
+            //JsonConverter.RuleResponse response = JsonConverter.ParseRuleResponseJSONToObject(llmResponse, out bool valid);
+            //Debug.Log("Response: " + response.valid + " " + response.reason);
+            //ReadLLMOutput(response.reason);
         }
         else
         {
@@ -124,7 +127,7 @@ Validate the rule by checking the following criteria, also known as Super Rules:
 8. A rule cannot make the board state invalid, unsolvable, or fully locked.
 9. When referring to adjacency, the surrounding 8 tiles are valid.
 10. A Joker Rule cannot change super rules.
-
+11. A Joker Rule can not contain a specific coordinate. 
 
 Current board state:
 {boardStateJson}
@@ -166,8 +169,18 @@ Example response:
                     // Parse JSON manually (simple approach)
                     string statusValue = ExtractJsonValue(jsonPart, "status");
                     string reasonValue = ExtractJsonValue(jsonPart, "reason");
-                    
-                    isValid = statusValue == "true";
+
+                    Debug.Log("Status: " + statusValue);
+
+                    if (statusValue == "true")
+                    {
+                        isValid = true;
+                    }
+                    else if (statusValue == "false")
+                    {
+                        isValid = false;
+                    }
+                    //bool.TryParse(statusValue, out isValid);
                     reason = string.IsNullOrEmpty(reasonValue) ? "No reason provided" : reasonValue;
                 }
                 else
@@ -220,7 +233,7 @@ Example response:
         Debug.Log($"Reason: {reason}");
         
         // Send result to ReadLLMOutput
-        ReadLLMOutput($"{(isValid ? "VALID" : "INVALID")}: {reason}");
+        //ReadLLMOutput($"{(isValid ? "VALID" : "INVALID")}: {reason}");
     }
     
     private string ExtractJsonValue(string json, string key)
@@ -232,13 +245,32 @@ Example response:
         int colonIndex = json.IndexOf(':', keyIndex);
         if (colonIndex < 0) return "";
         
-        int startQuote = json.IndexOf('"', colonIndex);
-        if (startQuote < 0) return "";
+        // Skip whitespace after colon
+        int valueStart = colonIndex + 1;
+        while (valueStart < json.Length && char.IsWhiteSpace(json[valueStart]))
+        {
+            valueStart++;
+        }
         
-        int endQuote = json.IndexOf('"', startQuote + 1);
-        if (endQuote < 0) return "";
+        if (valueStart >= json.Length) return "";
         
-        return json.Substring(startQuote + 1, endQuote - startQuote - 1);
+        // Check if value starts with a quote (string value)
+        if (json[valueStart] == '"')
+        {
+            int endQuote = json.IndexOf('"', valueStart + 1);
+            if (endQuote < 0) return "";
+            return json.Substring(valueStart + 1, endQuote - valueStart - 1);
+        }
+        else
+        {
+            // Non-quoted value (boolean, number, etc.)
+            int valueEnd = valueStart;
+            while (valueEnd < json.Length && json[valueEnd] != ',' && json[valueEnd] != '}')
+            {
+                valueEnd++;
+            }
+            return json.Substring(valueStart, valueEnd - valueStart).Trim();
+        }
     }
 
     public void ReadLLMOutput(string output)
