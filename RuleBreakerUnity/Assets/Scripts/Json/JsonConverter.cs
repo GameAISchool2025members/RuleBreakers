@@ -1,4 +1,6 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,8 +16,12 @@ public class JsonConverter : MonoBehaviour
     public bool testRulePromptToJSON = false;
     public string newRule = "This is a new rule.";
 
+    [Header(" ")]
+    public bool testParseValidPlacementJSONToDictionary = false;
+    public string placementJSONToParse = "Please add JSON.";
+
     [Header("Response")]
-    [TextArea(10,100)]
+    [TextArea(10, 100)]
     public string response;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,6 +43,13 @@ public class JsonConverter : MonoBehaviour
         {
             testRulePromptToJSON = false;
             response = RulePromptToJSON(newRule);
+        }
+
+        if (testParseValidPlacementJSONToDictionary)
+        {
+            testParseValidPlacementJSONToDictionary = false;
+            Dictionary<string, bool> result = ParseValidPlacementJSONToDictionary(placementJSONToParse, out bool valid);
+            response = valid.ToString();
         }
     }
 
@@ -73,5 +86,44 @@ public class JsonConverter : MonoBehaviour
         string json = JsonConvert.SerializeObject(prompt, Formatting.Indented);
         Debug.Log(json);
         return json;
+    }
+
+    public static Dictionary<string, bool> ParseValidPlacementJSONToDictionary(string json, out bool valid)
+    {
+        Dictionary<string, bool>  placementDict = new Dictionary<string, bool>();
+        valid = false;
+
+        //First check if string is valid json
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError("String was null or empty.");
+            return placementDict;
+        }
+
+        //Can we parse it into a JObject?
+        try
+        {
+            var testObject = JObject.Parse(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into JObject: " + e.Message);
+            return placementDict;
+        }
+
+        //Can we deserialize into string bool dict?
+        try
+        {
+            placementDict = JsonConvert.DeserializeObject<Dictionary<string, bool>>(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into Dictionary<string, bool>: " + e.Message);
+            return placementDict;
+        }
+
+
+        valid = true;
+        return placementDict;
     }
 }
