@@ -265,6 +265,10 @@ public class GameManager : MonoBehaviour
         }
 
         currentPlayerText.text = "Player " + currentPlayer;
+        foreach (GameObject tile in tiles)
+        {
+            tile.GetComponent<Tile>().changeColour();
+        }
     }
 
 
