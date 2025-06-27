@@ -20,9 +20,14 @@ public class JsonConverter : MonoBehaviour
     public bool testParseValidPlacementJSONToDictionary = false;
     public string placementJSONToParse = "Please add JSON.";
 
+    [Header(" ")]
+    public bool testParseRuleResponseJSONToObject = false;
+    public string ruleJSONToParse = "Please add JSON.";
+
     [Header("Response")]
     [TextArea(10, 100)]
     public string response;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -50,6 +55,13 @@ public class JsonConverter : MonoBehaviour
             testParseValidPlacementJSONToDictionary = false;
             Dictionary<string, PlacementEntry> result = ParseValidPlacementJSONToDictionary(placementJSONToParse, out bool valid);
             response = valid.ToString();
+        }
+
+        if (testParseRuleResponseJSONToObject)
+        {
+            testParseRuleResponseJSONToObject = false;
+            RuleResponse result = ParseRuleResponseJSONToObject(ruleJSONToParse, out bool valid);
+            response = $"valid parse: {valid.ToString()}\nJSON valid: {result.valid}\nJSON reason: {result.reason}";
         }
     }
 
@@ -147,5 +159,51 @@ public class JsonConverter : MonoBehaviour
         //All tests successful!
         valid = true;
         return placementDict;
+    }
+
+    public class RuleResponse
+    {
+        public bool valid;
+        public string reason;
+    }
+
+    public static RuleResponse ParseRuleResponseJSONToObject(string json, out bool valid)
+    {
+        RuleResponse response = new RuleResponse();
+        valid = false;
+
+        //First check if string is valid json
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError("String was null or empty.");
+            return response;
+        }
+
+        //Can we parse it into a JObject?
+        try
+        {
+            var testObject = JObject.Parse(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into JObject: " + e.Message);
+            return response;
+        }
+
+        //Can we deserialize into string bool dict?
+        try
+        {
+            response = JsonConvert.DeserializeObject<RuleResponse>(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into (bool valid, string reason): " + e.Message);
+            return response;
+        }
+
+
+        //All tests successful!
+        valid = true;
+        return response;
     }
 }
