@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public static class ListExtenstions
 {
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public GameObject allTiles;
 
     public int currentPlayer;
+    public TMP_Text currentPlayerText;
 
     public List<GameObject> p1Pieces = new List<GameObject>();
     public List<GameObject> p2Pieces = new List<GameObject>();
@@ -56,6 +58,17 @@ public class GameManager : MonoBehaviour
     {
         currentPlayer = Random.Range(1, 3); // Choose between 1 and 2
         Debug.Log("Player " + currentPlayer + " goes first.");
+        currentPlayerText.text = "Player " + currentPlayer;
+
+        if (currentPlayer == 1)
+        {
+            currentPlayerText.color = Color.cyan;
+        }
+
+        else
+        {
+            currentPlayerText.color = Color.red;
+        }
 
         p1Pieces.Clear();
         p2Pieces.Clear();
@@ -177,6 +190,11 @@ public class GameManager : MonoBehaviour
         {
             gameOver();
         }
+
+        else
+        {
+            swapPlayer();
+        }
     }
 
     void gameOver()
@@ -216,11 +234,15 @@ public class GameManager : MonoBehaviour
         if (currentPlayer == 1)
         {
             currentPlayer = 2;
+            currentPlayerText.color = Color.red;
         }
         else
         {
             currentPlayer = 1;
+            currentPlayerText.color = Color.cyan;
         }
+
+        currentPlayerText.text = "Player " + currentPlayer;
     }
 
 

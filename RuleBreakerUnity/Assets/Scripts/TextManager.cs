@@ -1,3 +1,5 @@
+using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -19,13 +21,14 @@ public class TextManager : MonoBehaviour
 
     public void ReadStringInput()
     {
-        llmInput = inputField.text.ToString();
+        string input = inputField.text.ToString();
+        llmInput = input.Substring(0, input.Length - 1);    // For some reason, Input Field has an non-whitespace end character, we delete this here.
         Debug.Log(llmInput);
     }
 
     public void SendInputToLLM()
     {
-        if (llmInput == "")
+        if (String.IsNullOrWhiteSpace(llmInput))
         {
             Debug.Log("You are trying to send an empty message to the LLM!");
             return;
