@@ -15,6 +15,7 @@ public static class ListExtenstions
 public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
+    public RulesManager rulesManager;
 
     public bool gameWon = false;
     public bool gameLost = false;
@@ -58,6 +59,11 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (rulesManager == null)
+        {
+            rulesManager = GameObject.Find("RulesManager").GetComponent<RulesManager>();
+        }
+
         currentPlayer = Random.Range(1, 3); // Choose between 1 and 2
         Debug.Log("Player " + currentPlayer + " goes first.");
         currentPlayerText.text = "Player " + currentPlayer;
@@ -102,54 +108,63 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        allow3Wins = rulesManager.Get3Wins();
+        allow4Wins = rulesManager.Get4Wins();
+        allow5Wins = rulesManager.Get5Wins();
+        randomConditions = rulesManager.GetRandomConditions();
 
+        // Debug.Log(allow3Wins + ", " + allow4Wins + ", " + allow5Wins + ", " + randomConditions);
 
-        // 21 Conditions currently implemented
-        // By default, if all 3 permissions are disabled, we go for 3 piece wins only.
-
-        if (!allow3Wins && !allow4Wins && !allow5Wins)
+        if (!randomConditions)
         {
-            allow3Wins = true;
-        }
-
-        if (allow3Wins)
-        {
-            conditions.AddMany("3InARow", "3Horizontal", "3Vertical", "3Diagonal", "3L");
-        }
-        if (allow4Wins)
-        {
-            conditions.AddMany("4InARow", "4Horizontal", "4Vertical", "4Diagonal",
-                                "4L", "4J", "4LJ", "4T", "Square", "Diamond");
-        }
-        if (allow5Wins)
-        {
-            conditions.AddMany("5InARow", "5Horizontal", "5Vertical", "5Diagonal", "Plus", "Cross");
-        }
-
-        if (randomConditions)
-        {
-            int winInt = getNewCondition();
-            winCon = conditions[winInt];
-
-            int loseInt = -1;
-
-            while (loseInt < 0)
-            {
-                loseInt = getNewCondition();
-                loseCon = conditions[loseInt];
-
-                // We make sure that we do not have any conflicts/unwanted wincons
-                if (conditionConflict())
-                {
-                    loseInt = -1;
-                }
-            }
+            winCon = rulesManager.GetWinCon();
+            loseCon = rulesManager.GetLoseCon();
         }
 
         else
         {
-            winCon = conditions[0];
-            loseCon = conditions[3];
+
+            // 21 Conditions currently implemented
+            // By default, if all 3 permissions are disabled, we go for 3 piece wins only.
+
+            if (!allow3Wins && !allow4Wins && !allow5Wins)
+            {
+                allow3Wins = true;
+            }
+
+            if (allow3Wins)
+            {
+                conditions.AddMany("3InARow", "3Horizontal", "3Vertical", "3Diagonal", "3L");
+            }
+            if (allow4Wins)
+            {
+                conditions.AddMany("4InARow", "4Horizontal", "4Vertical", "4Diagonal",
+                                    "4L", "4J", "4LJ", "4T", "Square", "Diamond");
+            }
+            if (allow5Wins)
+            {
+                conditions.AddMany("5InARow", "5Horizontal", "5Vertical", "5Diagonal", "Plus", "Cross");
+            }
+
+            if (randomConditions)
+            {
+                int winInt = getNewCondition();
+                winCon = conditions[winInt];
+
+                int loseInt = -1;
+
+                while (loseInt < 0)
+                {
+                    loseInt = getNewCondition();
+                    loseCon = conditions[loseInt];
+
+                    // We make sure that we do not have any conflicts/unwanted wincons
+                    if (conditionConflict())
+                    {
+                        loseInt = -1;
+                    }
+                }
+            }
         }
 
         winConText.text = winCon;
