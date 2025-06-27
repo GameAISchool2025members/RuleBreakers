@@ -61,7 +61,7 @@ public class JsonConverter : MonoBehaviour
         {
             testParseRuleResponseJSONToObject = false;
             RuleResponse result = ParseRuleResponseJSONToObject(ruleJSONToParse, out bool valid);
-            response = $"valid parse: {valid.ToString()}\nJSON valid: {result.valid}\nJSON reason: {result.reason}";
+            response = $"valid parse: {valid.ToString()}\nvalid: {result.status}\nreason: {result.reason}";
         }
     }
 
@@ -163,7 +163,7 @@ public class JsonConverter : MonoBehaviour
 
     public class RuleResponse
     {
-        public bool valid;
+        public bool status;
         public string reason;
     }
 
@@ -179,16 +179,31 @@ public class JsonConverter : MonoBehaviour
             return response;
         }
 
+        JObject testObject;
         //Can we parse it into a JObject?
         try
         {
-            var testObject = JObject.Parse(json);
+            testObject = JObject.Parse(json);
+            Debug.Log(testObject.ToString());
         }
         catch (JsonReaderException e)
         {
             Debug.LogError("Could not parse into JObject: " + e.Message);
             return response;
         }
+
+        //Check if contents are correct
+        if (!testObject.ContainsKey("status"))
+        {
+            Debug.LogError("Status is missing.");
+            return response;
+        }
+        if (!testObject.ContainsKey("reason"))
+        {
+            Debug.LogError("Reason is missing.");
+            return response;
+        }
+
 
         //Can we deserialize into string bool dict?
         try
@@ -197,9 +212,10 @@ public class JsonConverter : MonoBehaviour
         }
         catch (JsonReaderException e)
         {
-            Debug.LogError("Could not parse into (bool valid, string reason): " + e.Message);
+            Debug.LogError("Could not parse into RuleResponse: " + e.Message);
             return response;
         }
+
 
 
         //All tests successful!
