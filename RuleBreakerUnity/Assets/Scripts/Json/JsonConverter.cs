@@ -20,9 +20,18 @@ public class JsonConverter : MonoBehaviour
     public bool testParseValidPlacementJSONToDictionary = false;
     public string placementJSONToParse = "Please add JSON.";
 
+    [Header(" ")]
+    public bool testParseRuleResponseJSONToObject = false;
+    public string ruleJSONToParse = "Please add JSON.";
+
+    [Header(" ")]
+    public bool testParseNewRuleResponseJSONToObject = false;
+    public string newRuleJSONToParse = "Please add JSON.";
+
     [Header("Response")]
     [TextArea(10, 100)]
     public string response;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -48,8 +57,22 @@ public class JsonConverter : MonoBehaviour
         if (testParseValidPlacementJSONToDictionary)
         {
             testParseValidPlacementJSONToDictionary = false;
-            Dictionary<string, bool> result = ParseValidPlacementJSONToDictionary(placementJSONToParse, out bool valid);
+            Dictionary<string, PlacementEntry> result = ParseValidPlacementJSONToDictionary(placementJSONToParse, out bool valid);
             response = valid.ToString();
+        }
+
+        if (testParseRuleResponseJSONToObject)
+        {
+            testParseRuleResponseJSONToObject = false;
+            RuleResponse result = ParseRuleResponseJSONToObject(ruleJSONToParse, out bool valid);
+            response = $"valid parse: {valid.ToString()}\nvalid: {result.status}\nreason: {result.reason}";
+        }
+
+        if (testParseNewRuleResponseJSONToObject)
+        {
+            testParseNewRuleResponseJSONToObject=false;
+            NewRuleResponse result = ParseNewRuleResponseJSONToObject(newRuleJSONToParse, out bool valid);
+            response = $"valid parse: {valid.ToString()}\nrule: {result.rule}";
         }
     }
 
@@ -88,9 +111,15 @@ public class JsonConverter : MonoBehaviour
         return json;
     }
 
-    public static Dictionary<string, bool> ParseValidPlacementJSONToDictionary(string json, out bool valid)
+    public class PlacementEntry
     {
-        Dictionary<string, bool>  placementDict = new Dictionary<string, bool>();
+        public bool P1 { get; set; }
+        public bool P2 { get; set; }
+    }
+
+    public static Dictionary<string, PlacementEntry> ParseValidPlacementJSONToDictionary(string json, out bool valid)
+    {
+        Dictionary<string, PlacementEntry>  placementDict = new Dictionary<string, PlacementEntry>();
         valid = false;
 
         //First check if string is valid json
@@ -114,7 +143,7 @@ public class JsonConverter : MonoBehaviour
         //Can we deserialize into string bool dict?
         try
         {
-            placementDict = JsonConvert.DeserializeObject<Dictionary<string, bool>>(json);
+            placementDict = JsonConvert.DeserializeObject<Dictionary<string, PlacementEntry>>(json);
         }
         catch (JsonReaderException e)
         {
@@ -122,8 +151,139 @@ public class JsonConverter : MonoBehaviour
             return placementDict;
         }
 
+        //Do we have all required coordinates?
+        for (char file = 'A'; file <= 'H'; file++)
+        {
+            for (int rank = 1; rank <= 8; rank++)
+            {
+                string coord = $"{file}{rank}";
 
+                if (!placementDict.ContainsKey(coord))
+                {
+                    //Return early
+                    Debug.LogError($"Key {coord} is missing!\nNote that other keys may be missing as well.");
+                    return placementDict;
+                }
+            }
+        }
+
+        //All tests successful!
         valid = true;
         return placementDict;
+    }
+
+    public class RuleResponse
+    {
+        public bool status;
+        public string reason;
+    }
+
+    public static RuleResponse ParseRuleResponseJSONToObject(string json, out bool valid)
+    {
+        RuleResponse response = new RuleResponse();
+        valid = false;
+
+        //First check if string is valid json
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError("String was null or empty.");
+            return response;
+        }
+
+        JObject testObject;
+        //Can we parse it into a JObject?
+        try
+        {
+            testObject = JObject.Parse(json);
+            Debug.Log(testObject.ToString());
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into JObject: " + e.Message);
+            return response;
+        }
+
+        //Check if contents are correct
+        if (!testObject.ContainsKey("status"))
+        {
+            Debug.LogError("Status is missing.");
+            return response;
+        }
+        if (!testObject.ContainsKey("reason"))
+        {
+            Debug.LogError("Reason is missing.");
+            return response;
+        }
+
+
+        //Can we deserialize into string bool dict?
+        try
+        {
+            response = JsonConvert.DeserializeObject<RuleResponse>(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into RuleResponse: " + e.Message);
+            return response;
+        }
+
+
+
+        //All tests successful!
+        valid = true;
+        return response;
+    }
+
+    public class NewRuleResponse
+    {
+        public string rule;
+    }
+
+    public static NewRuleResponse ParseNewRuleResponseJSONToObject(string json, out bool valid)
+    {
+        NewRuleResponse response = new NewRuleResponse();
+        valid = false;
+
+        //First check if string is valid json
+        if (string.IsNullOrEmpty(json))
+        {
+            Debug.LogError("String was null or empty.");
+            return response;
+        }
+
+        JObject testObject;
+        //Can we parse it into a JObject?
+        try
+        {
+            testObject = JObject.Parse(json);
+            Debug.Log(testObject.ToString());
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into JObject: " + e.Message);
+            return response;
+        }
+
+        //Check if contents are correct
+        if (!testObject.ContainsKey("rule"))
+        {
+            Debug.LogError("Rule is missing.");
+            return response;
+        }
+
+        //Can we deserialize into string bool dict?
+        try
+        {
+            response = JsonConvert.DeserializeObject<NewRuleResponse>(json);
+        }
+        catch (JsonReaderException e)
+        {
+            Debug.LogError("Could not parse into NewRuleResponse: " + e.Message);
+            return response;
+        }
+
+        //All tests successful!
+        valid = true;
+        return response;
     }
 }
