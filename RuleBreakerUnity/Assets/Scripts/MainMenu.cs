@@ -15,6 +15,7 @@ public class MainMenu : MonoBehaviour
         {
             StartCoroutine(LoadScene());
             isLoading = true;
+            Debug.Log("Game starting...");
         }
     }
 
@@ -22,13 +23,5 @@ public class MainMenu : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         SceneManager.LoadScene(sceneName);
-    }
-
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            StartGame();
-        }
     }
 }
