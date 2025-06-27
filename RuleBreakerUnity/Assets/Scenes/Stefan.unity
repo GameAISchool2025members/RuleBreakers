@@ -2648,6 +2648,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad35505ee9d58d749a20799e51512cf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testBoardStateToJSON: 0
+  testRulePromptToJSON: 0
+  newRule: This is a new rule.
+  response: 
 --- !u!1001 &1074238868
 PrefabInstance:
   m_ObjectHideFlags: 0
