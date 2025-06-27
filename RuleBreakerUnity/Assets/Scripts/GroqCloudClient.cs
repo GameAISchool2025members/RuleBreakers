@@ -37,7 +37,7 @@ public class GroqCloudClient : MonoBehaviour
 {
     [Header("GroqCloud Settings")]
     [SerializeField] private string apiKey = "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"; // Set your API key in inspector or through code
-    [SerializeField] private string model = "llama3-70b-8192";
+    [SerializeField] private string model = "llama-3.3-70b-versatile";
     
     private const string GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
     
@@ -104,8 +104,8 @@ public class GroqCloudClient : MonoBehaviour
         {
             model = model,
             messages = messages,
-            temperature = 0.7f,
-            max_tokens = 1000
+            temperature = 1.0f,
+            max_tokens = 4096
         };
         
         // Convert to JSON

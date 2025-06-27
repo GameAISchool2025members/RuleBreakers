@@ -189,6 +189,8 @@ Validate the rule by checking the following criteria, also known as Super Rules:
 Current board state:
 {boardStateJson}
 
+Remember that board state is VERY important to your decision. When ""Player 1"" or ""Player 2"" is mentioned, it is referring to the fact that the specific player piece is occupying the tile. When it is ""Empty"" then it can be filled by one of the players.
+
 Return your response strictly as a JSON dictionary in exactly this format:
 {{
     ""status"": true or false,
@@ -234,6 +236,8 @@ Validate the new rule by checking the following criteria, also known as Super Ru
 Current board state:
 {boardStateJson}
 
+Remember that board state is VERY important to your decision. When ""Player 1"" or ""Player 2"" is mentioned, it is referring to the fact that the specific player piece is occupying the tile. When it is ""Empty"" then it can be filled by one of the players.
+
 Return your response strictly as a JSON dictionary in exactly this format:
 {{
     ""rule"": ""New rule""
@@ -245,6 +249,43 @@ FOr example, you were provided a rule ""Player can only place on A1"" which you 
 }}";
     }
     
+    public string CreatetileValidatorPrompt(string rule)
+    {
+        // Get current board state as JSON
+        string boardStateJson = JsonConverter.BoardStateToJSON();
+
+        
+        return $@"You are a game rule validator and creator for a board game where players move pieces on a 8x8 grid. The board is labeled A1 to H8, with A1 being the bottom left and H8 being the top right. There is a dynamic winning and losing condition which can change at the start of the game but stays static throughtout the game.
+
+Each player can either place a piece on the board or create a rule that the next player needs to follow in the next turn. These rules are called Joker Rules. 
+
+You are given the the rule and the board state You need to validate if each tile is valid for player 1 and player 2.
+
+The rule is the following:
+""{rule}""
+
+Current board state is the:
+{boardStateJson}
+
+Remember that board state is VERY important to your decision. When ""Player 1"" or ""Player 2"" is mentioned, it is referring to the fact that the specific player piece is occupying the tile. When it is ""Empty"" then it can be filled by one of the players.
+
+Return your response strictly as a JSON dictionary in exactly this format. Only and only return the JSON dictionary, no other text:
+{{
+    ""A1"": {{ ""P1"": true or false, ""P2"": true or false }},
+    ""A2"": {{ ""P1"": true or false, ""P2"": true or false }},
+    ...
+    ""H8"": {{ ""P1"": true or false, ""P2"": true or false }}
+}}
+
+Example response:
+{{
+    ""A1"": {{ ""P1"": true, ""P2"": false }},
+    ""A2"": {{ ""P1"": false, ""P2"": false }},
+    ...
+    ""H8"": {{ ""P1"": true, ""P2"": false }}
+}}";
+    }
+
     private void ProcessValidationResponse(string originalRule, string llmResponse)
     {
         Debug.Log($"LLM Response: {llmResponse}");

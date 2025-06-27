@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public bool gameOngoing = true;
 
     public GameObject allTiles;
+    public GroqCloudClient groqClient;
+    public TextManager textManager;
 
     public int currentPlayer;
     public TMP_Text currentPlayerText;
@@ -36,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     public string winCon;
     public string loseCon;
+    public string currentJokerRule = ""; // Store the current joker rule from TextManager
     public List<string> conditions = new List<string>();
     public bool randomConditions = false;
     public bool allow3Wins = true;
@@ -198,7 +201,7 @@ public class GameManager : MonoBehaviour
 
         else
         {
-            swapPlayer();
+            StartCoroutine(swapPlayer());
         }
     }
 
@@ -235,7 +238,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadMainMenu()); 
     }
 
-    public void swapPlayer()
+    public IEnumerator swapPlayer()
     {
         if (currentPlayer == 1)
         {
@@ -248,6 +251,29 @@ public class GameManager : MonoBehaviour
             currentPlayerText.color = Color.cyan;
         }
 
+        string prompt = textManager.CreatetileValidatorPrompt(currentJokerRule);
+
+        string tileValidationResponse = "";
+        bool success = false;
+        string llmResponse = "";
+        bool responseReceived = false;
+
+        groqClient.SendMessage(prompt, (response, isSuccess) =>
+        {
+            tileValidationResponse = response;
+            success = isSuccess;
+            responseReceived = true;
+        });
+        
+        //Wait for response
+        while (!responseReceived)
+        {
+            yield return null;
+        }
+
+        Dictionary<string, JsonConverter.PlacementEntry> validationResponse = JsonConverter.ParseValidPlacementJSONToDictionary(tileValidationResponse, out bool valid);
+        Debug.Log("tileValidationResponse: " + validationResponse);
+        
         currentPlayerText.text = "Player " + currentPlayer;
     }
 
@@ -280,6 +306,14 @@ public class GameManager : MonoBehaviour
     public void setTileLegal(GameObject tile, bool isLegal)
     {
         tile.GetComponent<Tile>().setTileLegal(isLegal, currentPlayer);
+    }
+
+    public void SetCurrentJokerRule(string rule)
+    {
+        currentJokerRule = rule;
+        Debug.Log($"Joker rule received from TextManager: {rule}");
+        // You can add additional logic here to process the rule
+        // For example, validate tiles based on the new rule
     }
 
     bool checkIfConditionMet(string condition)

@@ -6263,7 +6263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   apiKey: 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
-  model: llama3-70b-8192
+  model: llama-3.3-70b-versatile
 --- !u!1 &1293842533
 GameObject:
   m_ObjectHideFlags: 0
@@ -8608,6 +8608,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
+      propertyPath: groqClient
+      value: 
+      objectReference: {fileID: 1287363768}
+    - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: winConText
       value: 
       objectReference: {fileID: 338386642}
@@ -8615,6 +8619,10 @@ PrefabInstance:
       propertyPath: loseConText
       value: 
       objectReference: {fileID: 1949196088}
+    - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
+      propertyPath: textManager
+      value: 
+      objectReference: {fileID: 1287363767}
     - target: {fileID: 3784390309972589190, guid: 4a941c421d6d4f64c9f1a13b225184e3, type: 3}
       propertyPath: randomConditions
       value: 1
